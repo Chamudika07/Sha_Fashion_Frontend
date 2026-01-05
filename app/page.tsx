@@ -103,7 +103,7 @@ export default function HomePage() {
                     {shoes.map((shoe) => (
                       <div
                         key={shoe.id}
-                        className="mb-4 p-4 border rounded ml-4"
+                        className="mb-4 ml-4 p-4 border rounded flex gap-6 items-center"
                       >
                         <h2 className="text-xl font-semibold">
                           Size: {shoe.size}
