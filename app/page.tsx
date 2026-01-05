@@ -40,9 +40,6 @@ export default function HomePage() {
             Update
           </button>
      
-          <button className="bg-blue-600 text-white px-6 py-2 rounded w-32" onClick={() => router.push("/login")}>
-            Login
-          </button>
         </div>
 
         <div>
@@ -70,7 +67,7 @@ export default function HomePage() {
                     <h3 className="text-lg font-semibold text-blue-600 mb-2">{typeCategory}</h3>
                     
                     {shoes.map((shoe) => (
-                      <div key={shoe.id} className="mb-4 ml-4 p-4 border rounded flex gap-6 items-center">
+                      <div key={shoe.id} className="mb-4 p-4 border rounded ml-4">
                         <h2 className="text-xl font-semibold">{shoe.size}</h2>
                         <p>Type: {shoe.type}</p>
                         <p>Quantity: {shoe.quntity}</p>
