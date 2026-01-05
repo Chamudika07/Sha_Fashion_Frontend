@@ -1,9 +1,10 @@
 'use client';
 
-import router from 'next/dist/shared/lib/router/router';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Navbar() {
+  const router = useRouter();
   return (
     <nav className="w-full bg-gray-900 text-white px-6 py-4 flex justify-between items-center">
       {/* Logo / Brand */}
@@ -13,20 +14,20 @@ export default function Navbar() {
 
       {/* Navigation links */}
       <div className="flex gap-6">
-        <Link href="/" className="hover:text-blue-400">
-          Home
+        <Link href="/?for=boys" className="hover:text-blue-400">
+          Boys Shoes
         </Link>
 
-        <Link href="/projects" className="hover:text-blue-400">
-          Projects
+        <Link href="/?for=girls" className="hover:text-blue-400">
+          Girls Shoes
         </Link>
 
-        <Link href="/about" className="hover:text-blue-400">
-          About
+        <Link href="/boys-clothes" className="hover:text-blue-400">
+          Boys School Clothes
         </Link>
 
-        <Link href="/contact" className="hover:text-blue-400">
-          Contact
+        <Link href="/girls-clothes" className="hover:text-blue-400">
+          Girls School Clothes
         </Link>
       </div>
     </nav>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {getAllShoes} from "../services/shoes";
-import { useRouter } from "next/navigation";
+import { getAllShoes } from "../services/shoes";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Shoe {
   id: number;
@@ -13,41 +13,68 @@ interface Shoe {
   created_at: string;
 }
 
-
 export default function HomePage() {
-    const router = useRouter();
-    const [shoeList, setShoeList] = useState<Shoe[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const filterFor = searchParams.get("for"); // boys | girls | null
 
-    useEffect(() => {
-      getAllShoes()
-        .then((data) => setShoeList(data))
-        .catch((error) => console.error("Error loading shoes:", error));
-    }, []);
+  const [shoeList, setShoeList] = useState<Shoe[]>([]);
 
-    return (
-      <main className="p-6">
-        
-        <div className="flex flex-row gap-4 items-center justify-center mb-8">
-          <button className="bg-green-600 text-white px-6 py-2 rounded w-32" onClick={() => router.push("/add")}>
-            Add
-          </button>
-          
-          <button className="bg-purple-600 text-white px-6 py-2 rounded w-32" onClick={() => router.push("/quantity")}>
-            Buy/Sell
-          </button>
+  useEffect(() => {
+    getAllShoes()
+      .then((data) => setShoeList(data))
+      .catch((error) => console.error("Error loading shoes:", error));
+  }, []);
 
-          <button className="bg-yellow-600 text-white px-6 py-2 rounded w-32" onClick={() => router.push("/update")}>
-            Update
-          </button>
-     
-        </div>
+  // ✅ FILTER BASED ON NAVBAR CLICK
+  const filteredShoes = filterFor
+    ? shoeList.filter(
+        (shoe) =>
+          shoe.boysORgirls.toLowerCase() === filterFor.toLowerCase()
+      )
+    : shoeList;
 
-        <div>
-          <h1 className="text-2xl font-bold mb-4">Shoe Collection</h1>
+  return (
+    <main className="p-6">
+      {/* ACTION BUTTONS */}
+      <div className="flex flex-row gap-4 items-center justify-center mb-8">
+        <button
+          className="bg-green-600 text-white px-6 py-2 rounded w-32"
+          onClick={() => router.push("/add")}
+        >
+          Add
+        </button>
 
-          {(() => {
-            // Group shoes by "For" first, then by "Type"
-            const groupedByForAndType = shoeList.reduce((acc, shoe) => {
+        <button
+          className="bg-purple-600 text-white px-6 py-2 rounded w-32"
+          onClick={() => router.push("/quantity")}
+        >
+          Buy/Sell
+        </button>
+
+        <button
+          className="bg-yellow-600 text-white px-6 py-2 rounded w-32"
+          onClick={() => router.push("/update")}
+        >
+          Update
+        </button>
+      </div>
+
+      {/* SHOE LIST */}
+      <div>
+        <h1 className="text-2xl font-bold mb-4">
+          Shoe Collection
+          {filterFor && (
+            <span className="ml-2 text-sm text-gray-500">
+              ({filterFor.toUpperCase()})
+            </span>
+          )}
+        </h1>
+
+        {(() => {
+          // GROUP BY BOYS/GIRLS → TYPE
+          const groupedByForAndType = filteredShoes.reduce(
+            (acc, shoe) => {
               if (!acc[shoe.boysORgirls]) {
                 acc[shoe.boysORgirls] = {};
               }
@@ -56,19 +83,31 @@ export default function HomePage() {
               }
               acc[shoe.boysORgirls][shoe.type].push(shoe);
               return acc;
-            }, {} as Record<string, Record<string, Shoe[]>>);
+            },
+            {} as Record<string, Record<string, Shoe[]>>
+          );
 
-            return Object.entries(groupedByForAndType).map(([forCategory, types]) => (
+          return Object.entries(groupedByForAndType).map(
+            ([forCategory, types]) => (
               <div key={forCategory} className="mb-6">
-                <h2 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">{forCategory}</h2>
-                
+                <h2 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">
+                  {forCategory}
+                </h2>
+
                 {Object.entries(types).map(([typeCategory, shoes]) => (
                   <div key={typeCategory} className="mb-4 ml-4">
-                    <h3 className="text-lg font-semibold text-blue-600 mb-2">{typeCategory}</h3>
-                    
+                    <h3 className="text-lg font-semibold text-blue-600 mb-2">
+                      {typeCategory}
+                    </h3>
+
                     {shoes.map((shoe) => (
-                      <div key={shoe.id} className="mb-4 p-4 border rounded ml-4">
-                        <h2 className="text-xl font-semibold">{shoe.size}</h2>
+                      <div
+                        key={shoe.id}
+                        className="mb-4 p-4 border rounded ml-4"
+                      >
+                        <h2 className="text-xl font-semibold">
+                          Size: {shoe.size}
+                        </h2>
                         <p>Type: {shoe.type}</p>
                         <p>Quantity: {shoe.quntity}</p>
                       </div>
@@ -76,10 +115,12 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-            ));
-          })()}
-        </div>
-      </main>
-);
+            )
+          );
+        })()}
+      </div>
+    </main>
+  );
 }
+
 
