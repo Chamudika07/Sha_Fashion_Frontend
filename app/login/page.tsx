@@ -27,7 +27,7 @@ export default function LoginPage() {
             );
             //save the token
             localStorage.setItem("access_token", response.data.access_token);
-
+            //check git status
             //redirect to home page
             router.push("/");
         } catch (err) {
