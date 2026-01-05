@@ -70,12 +70,10 @@ export default function HomePage() {
                     <h3 className="text-lg font-semibold text-blue-600 mb-2">{typeCategory}</h3>
                     
                     {shoes.map((shoe) => (
-                      <div key={shoe.id} className="mb-4 p-4 border rounded ml-4">
+                      <div key={shoe.id} className="mb-4 ml-4 p-4 border rounded flex gap-6 items-center">
                         <h2 className="text-xl font-semibold">{shoe.size}</h2>
                         <p>Type: {shoe.type}</p>
-                        <p>For: {shoe.boysORgirls}</p>
                         <p>Quantity: {shoe.quntity}</p>
-                        <p>Created: {new Date(shoe.created_at).toLocaleDateString()}</p>
                       </div>
                     ))}
                   </div>
