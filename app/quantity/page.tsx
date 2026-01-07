@@ -4,155 +4,228 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import api from "@/services/api";
 
-export default function BuySellShoePage() {
+type Tab = "shoe" | "shirt" | "short" | "frock";
+
+export default function BuySellPage() {
     const router = useRouter();
+    const [tab, setTab] = useState<Tab>("shoe");
+
     const [size, setSize] = useState("");
     const [type, setType] = useState("");
+    const [color, setColor] = useState("");
     const [boysORgirls, setBoysORgirls] = useState("");
     const [quntity, setQuntity] = useState("");
-    const [action, setAction] = useState("sell"); // Default action
+
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleBuySellShoe = async (selectedAction: "buy" | "sell") => {
+    const inputClass =
+        "border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300";
+
+    const handleAction = async (action: "buy" | "sell") => {
         setError("");
         setSuccess("");
 
-        // Validation
-        if (!size || !type || !boysORgirls || !quntity) {
-            setError("All fields are required");
+        if (!size || !quntity) {
+            setError("All required fields must be filled");
             return;
         }
 
         if (Number(quntity) <= 0) {
-            setError("Quantity must be a positive integer");
+            setError("Quantity must be greater than 0");
             return;
         }
 
         try {
             setLoading(true);
-            const updateData = {
-                size: Number(size),
-                type: type,
-                boysORgirls: boysORgirls,
-                quntity: Number(quntity),
-                action: selectedAction,
-            };
 
-            await api.put("/shoes/quantity", updateData);
-            
-            const actionText = selectedAction === "sell" ? "Sold" : "Bought";
-            setSuccess(`Shoe ${actionText.toLowerCase()} successfully!`);
-            
-            // Reset form
+            if (tab === "shoe") {
+                await api.put("/shoes/quantity", {
+                    size: Number(size),
+                    type,
+                    boysORgirls,
+                    quntity: Number(quntity),
+                    action,
+                });
+            }
+
+            if (tab === "shirt") {
+                await api.put("/shirts/quantity", {
+                    size: Number(size),
+                    quntity: Number(quntity),
+                    action,
+                });
+            }
+
+            if (tab === "short") {
+                await api.put("/shorts", {
+                    size: Number(size),
+                    color,
+                    type,
+                    quntity: Number(quntity),
+                    action,
+                });
+            }
+
+            if (tab === "frock") {
+                await api.put("/frocks/quantity", {
+                    size,
+                    quntity: Number(quntity),
+                    action,
+                });
+            }
+
+            setSuccess(`Successfully ${action === "buy" ? "bought" : "sold"} item`);
             setSize("");
             setType("");
+            setColor("");
             setBoysORgirls("");
             setQuntity("");
-
-            // Redirect to home after 1.5 seconds
-            setTimeout(() => {
-                router.push("/");
-            }, 1500);
-        } catch (err) {
-            const errorMessage = (err as any).response?.data?.detail || `Failed to ${selectedAction} shoe`;
-            setError(errorMessage);
+        } catch (err: any) {
+            setError(err.response?.data?.detail || "Action failed");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <main className="flex items-center justify-center min-h-screen flex-col">
-            <h1 className="text-2xl font-bold mb-4">Buy / Sell Shoes</h1>
+        <main className="min-h-screen flex items-center justify-center p-6">
+            <div className="w-full max-w-md">
 
-            {error && <p className="text-red-500 mb-3">{error}</p>}
+                <h1 className="text-2xl font-bold mb-4 text-center">
+                    Buy / Sell Inventory
+                </h1>
 
-            {success && <p className="text-green-500 mb-3">{success}</p>}
-
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3">
-                {/* Size */}
-                <input
-                    type="number"
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                    placeholder="Shoe Size"
-                    className="border p-2 mb-3 w-64"
-                    min="1"
-                    required
-                />
-
-                {/* Type */}
-                <select
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                    className="border p-2 mb-3 w-64"
-                    aria-label="Shoe Type"
-                    required
-                >
-                    <option value="">Select Shoe Type</option>
-                    <option value="Velcro">Velcro</option>
-                    <option value="Sport/Lace">Sport/Lace</option>
-                    <option value="Nurse">Nurse</option>
-                    <option value="Kennas">Kennas</option>
-                    <option value="Pree-School">Pree-School</option>
-                    <option value="Bota">Bota</option>
-                    <option value="Pump">Pump</option>
-                </select>
-
-                {/* Boys or Girls */}
-                <select
-                    value={boysORgirls}
-                    onChange={(e) => setBoysORgirls(e.target.value)}
-                    className="border p-2 mb-3 w-64"
-                    aria-label="Boys or Girls"
-                    required
-                >
-                    <option value="">Select Boys or Girls</option>
-                    <option value="Boys">Boys</option>
-                    <option value="Girls">Girls</option>
-                </select>
-
-                {/* Quantity */}
-                <input
-                    type="number"
-                    value={quntity}
-                    onChange={(e) => setQuntity(e.target.value)}
-                    placeholder="Quantity"
-                    className="border p-2 mb-3 w-64"
-                    min="1"
-                    required
-                />
-
-                {/* Buy and Sell Buttons */}
-                <div className="flex gap-3 justify-center">
-                    <button
-                        type="button"
-                        onClick={() => handleBuySellShoe("sell")}
-                        disabled={loading}
-                        className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 disabled:bg-gray-400"
-                    >
-                        {loading ? "Processing..." : "Sell"}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handleBuySellShoe("buy")}
-                        disabled={loading}
-                        className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
-                    >
-                        {loading ? "Processing..." : "Buy"}
-                    </button>
+                {/* Tabs */}
+                <div className="flex justify-center gap-4 mb-6">
+                    {["shoe", "shirt", "short", "frock"].map((t) => (
+                        <button
+                            key={t}
+                            onClick={() => setTab(t as Tab)}
+                            className={`px-4 py-2 rounded ${
+                                tab === t ? "bg-blue-600 text-white" : "bg-pink-700"
+                            }`}
+                        >
+                            {t.toUpperCase()}
+                        </button>
+                    ))}
                 </div>
-            </form>
 
-            {/* Back Button */}
-            <button
-                onClick={() => router.back()}
-                className="mt-4 text-blue-600 hover:text-blue-800 font-medium"
-            >
-                ← Back
-            </button>
+                {error && <p className="text-red-500 mb-3 text-center">{error}</p>}
+                {success && <p className="text-green-500 mb-3 text-center">{success}</p>}
+
+                <div className="flex justify-center">
+                    <div className="flex flex-col gap-4 w-64">
+
+                        {/* SIZE */}
+                        {tab === "frock" ? (
+                            <select
+                                className={inputClass}
+                                value={size}
+                                onChange={(e) => setSize(e.target.value)}
+                                required
+                            >
+                                <option value="">Size</option>
+                                <option>XS</option>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                                <option>XL</option>
+                                <option>2XL</option>
+                                <option>3XL</option>
+                                <option>4XL</option>
+                            </select>
+                        ) : (
+                            <input
+                                className={inputClass}
+                                type="text"
+                                placeholder="Size"
+                                value={size}
+                                onChange={(e) => setSize(e.target.value)}
+                                required
+                            />
+                        )}
+
+                        {/* Shoe fields */}
+                        {tab === "shoe" && (
+                            <>
+                                <select className={inputClass} value={type} onChange={(e) => setType(e.target.value)}>
+                                    <option value="">Type</option>
+                                    <option>Velcro</option>
+                                    <option>Sport/Lace</option>
+                                    <option>Nurse</option>
+                                    <option>Kennas</option>
+                                    <option>Bota</option>
+                                    <option>Pump</option>
+                                </select>
+
+                                <select
+                                    className={inputClass}
+                                    value={boysORgirls}
+                                    onChange={(e) => setBoysORgirls(e.target.value)}
+                                >
+                                    <option value="">Boys / Girls</option>
+                                    <option>Boys</option>
+                                    <option>Girls</option>
+                                </select>
+                            </>
+                        )}
+
+                        {/* Short fields */}
+                        {tab === "short" && (
+                            <>
+                                <select className={inputClass} value={color} onChange={(e) => setColor(e.target.value)}>
+                                    <option value="">Color</option>
+                                    <option>Blue</option>
+                                    <option>White</option>
+                                </select>
+
+                                <select className={inputClass} value={type} onChange={(e) => setType(e.target.value)}>
+                                    <option value="">Type</option>
+                                    <option>Strip</option>
+                                    <option>Elastic</option>
+                                </select>
+                            </>
+                        )}
+
+                        {/* Quantity */}
+                        <input
+                            className={inputClass}
+                            type="number"
+                            placeholder="Quantity"
+                            value={quntity}
+                            onChange={(e) => setQuntity(e.target.value)}
+                            required
+                        />
+
+                        {/* Buttons */}
+                        <div className="flex gap-3 justify-center mt-2">
+                            <button
+                                disabled={loading}
+                                onClick={() => handleAction("sell")}
+                                className="bg-red-600 text-white px-4 py-2 rounded"
+                            >
+                                Sell
+                            </button>
+                            <button
+                                disabled={loading}
+                                onClick={() => handleAction("buy")}
+                                className="bg-green-600 text-white px-4 py-2 rounded"
+                            >
+                                Buy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    onClick={() => router.back()}
+                    className="mt-6 text-blue-600 block mx-auto"
+                >
+                    ← Back
+                </button>
+            </div>
         </main>
     );
 }

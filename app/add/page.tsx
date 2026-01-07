@@ -165,6 +165,8 @@ export default function AddInventoryPage() {
                             <option value="Nurse">Nurse</option>
                             <option value="Kennas">Kennas</option>
                             <option value="Pree-School">Pree-School</option>
+                            <option value="Bota">Bota</option>
+                             <option value="Pump">Pump</option>
                         </select>
                         <select value={boysORgirls} onChange={(e) => setBoysORgirls(e.target.value)} required>
                             <option value="">Boys / Girls</option>
