@@ -22,11 +22,11 @@ export default function Navbar() {
           Girls Shoes
         </Link>
 
-        <Link href="/boys-clothes" className="hover:text-blue-400">
+        <Link href="/?category=boys-clothes" className="hover:text-blue-400">
           Boys School Clothes
         </Link>
 
-        <Link href="/girls-clothes" className="hover:text-blue-400">
+        <Link href="/?category=girls-clothes" className="hover:text-blue-400">
           Girls School Clothes
         </Link>
       </div>
