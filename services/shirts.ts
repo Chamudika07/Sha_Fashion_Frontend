@@ -1,11 +1,11 @@
 import api from "./api";
 
-export const getAllShorts = async () => {
+export const getAllShirts = async () => {
     try {
-        const response = await api.get("/shorts");
+        const response = await api.get("/shirts");
         return response.data;
     } catch (error) {
-        console.error("Error fetching shorts:", error);
+        console.error("Error fetching shirts:", error);
         throw error;
     }
 };
