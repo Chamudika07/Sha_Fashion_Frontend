@@ -28,14 +28,14 @@ interface Frock {
 
 interface Shirt {
   id: number;
-  size: string;
+  size: number;
   quntity: number;
   created_at: string;
 }
 
 interface Short {
   id: number;
-  size: string;
+  size: number;
   color: string;
   type: string;
   quntity: number;
@@ -191,8 +191,8 @@ export default function HomePage() {
 
           {/* SHIRTS */}
           <h2 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">Shirts</h2>
-          {shirtList.map((shirt) => (
-            <div key={shirt.id} className="mb-3 p-4 border rounded">
+          {[...shirtList].sort((a, b) => a.size - b.size).map((shirt) => (
+            <div key={shirt.id} className="ml-4 mb-2 p-4 border rounded flex gap-6">
               <p>Size: {shirt.size}</p>
               <p>Quantity: {shirt.quntity}</p>
             </div>
@@ -215,10 +215,10 @@ export default function HomePage() {
                     Color: {color}
                   </h3>
 
-                  {shorts.map((short) => (
+                  {[...shorts].sort((a, b) => a.size - b.size).map((short) => (
                     <div
                       key={short.id}
-                      className="ml-4 mt-2 p-4 border rounded"
+                      className="ml-4 mb-2 p-4 border rounded flex gap-6"
                     >
                       <p>Size: {short.size}</p>
                       <p>Type: {short.type}</p>
@@ -240,8 +240,8 @@ export default function HomePage() {
         <div>
           <h1 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">Girls School Clothes</h1>
 
-          {frockList.map((frock) => (
-            <div key={frock.id} className="mb-4 p-4 border rounded">
+          {[...frockList].sort((a, b) => a.size.localeCompare(b.size)).map((frock) => (
+            <div key={frock.id} className="ml-4 mb-2 p-4 border rounded flex gap-6">
               <p>Size: {frock.size}</p>
               <p>Quantity: {frock.quntity}</p>
             </div>
