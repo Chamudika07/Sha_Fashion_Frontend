@@ -162,7 +162,7 @@ export default function HomePage() {
                           {type}
                         </h3>
 
-                        {shoes.map((shoe) => (
+                        {[...shoes].sort((a, b) => a.size - b.size).map((shoe) => (
                           <div
                             key={shoe.id}
                             className="ml-4 mb-2 p-4 border rounded flex gap-6"
@@ -190,7 +190,7 @@ export default function HomePage() {
           <h1 className="text-2xl font-bold mb-6">Boys School Clothes</h1>
 
           {/* SHIRTS */}
-          <h2 className="text-xl font-semibold mb-3">Shirts</h2>
+          <h2 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">Shirts</h2>
           {shirtList.map((shirt) => (
             <div key={shirt.id} className="mb-3 p-4 border rounded">
               <p>Size: {shirt.size}</p>
@@ -199,7 +199,7 @@ export default function HomePage() {
           ))}
 
           {/* SHORTS (GROUPED BY COLOR) */}
-          <h2 className="text-xl font-semibold mt-6 mb-3">Shorts</h2>
+          <h2 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">Shorts</h2>
 
           {(() => {
             const groupedByColor = shortList.reduce((acc, short) => {
@@ -238,7 +238,7 @@ export default function HomePage() {
 
       {category === "girls-clothes" && (
         <div>
-          <h1 className="text-2xl font-bold mb-6">Girls School Clothes</h1>
+          <h1 className="text-xl font-bold bg-indigo-900 p-3 rounded mb-4">Girls School Clothes</h1>
 
           {frockList.map((frock) => (
             <div key={frock.id} className="mb-4 p-4 border rounded">

@@ -1,19 +1,20 @@
-// services/api.ts
-import axios from "axios";
+//this is the api service to make requests to the backend (backend connection)
+import axios from "axios";  
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // (see Fix 2)
-  withCredentials: true,
+    baseURL : "http://127.0.0.1:8000", //my backend URL
+    withCredentials: true,
 });
 
+//OPTIONAL (Recommended): Auto Attach Token to Requests
+
 api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
 export default api;
+
